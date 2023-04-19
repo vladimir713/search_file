@@ -7,7 +7,7 @@ import java.util.concurrent.*;
 
 public class Main {
     public static void main(String[] args) throws IOException {
-        searchFile("system.ini", "c:\\Windows\\Help");
+        searchFile("mmc.CHM", "c:\\Windows\\Help");
     }
     public static void searchFile(String file, String dir) throws IOException {
         List<Path> listDirs = Files.walk(Paths.get(dir))
@@ -15,7 +15,7 @@ public class Main {
         for(Path s:listDirs) {
             System.out.println(s);
         }
-        ExecutorService executorService = Executors.newCachedThreadPool();
+        ExecutorService executorService = Executors.newSingleThreadExecutor();
 
         for (Path p:listDirs) {
             executorService.execute(() -> {
@@ -23,6 +23,9 @@ public class Main {
                     List<Path> listFiles = Files.walk(Paths.get(p.toString()))
                             .filter(Files::isRegularFile).toList();
                     for (Path f: listFiles) {
+                        if (f.getFileName().toString().equals(file)) {
+                            System.out.println(f.getFileName() + "--------------------------------------------------");
+                        }
                         System.out.println(f);
                     }
                 } catch (IOException e) {
