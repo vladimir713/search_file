@@ -52,7 +52,7 @@ public class Main {
             for (Path p:list) {
                 System.out.println(p + " размер = " + Files.size(p));
             }
-            System.out.println("Всего найдено файлов: " + list.size() + "\n\n" + "Копировать их по сети? (y/n)");
+            System.out.print("Всего найдено файлов: " + list.size() + "\n\n" + "Копировать их по сети? (y/n) ");
             Scanner sc = new Scanner(System.in);
             if (sc.nextLine().equals("y")) {
                 transferFile(list, "http://127.0.0.1:8080/transfery");
@@ -72,10 +72,22 @@ public class Main {
     }
     public static void transferFile(List<Path> list, String uri) throws FileNotFoundException {
         HttpClient client = HttpClient.newHttpClient();
-        HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create(uri))
-                .POST(HttpRequest.BodyPublishers.ofFile(Paths.get("c:\\Windows\\Help\\X.log")))
-                .build();
+        for (Path p:list) {
+            HttpRequest request = HttpRequest.newBuilder()
+                  .uri(URI.create(uri))
+                  .POST(HttpRequest.BodyPublishers.ofFile(p))
+                  .build();
+            client.sendAsync(request, HttpResponse.BodyHandlers.ofString())
+                  .thenApply(HttpResponse::body)
+                  .thenAccept(System.out::println);
+        }
+//        HttpRequest request = HttpRequest.newBuilder()
+//                .uri(URI.create(uri))
+//                .POST(HttpRequest.BodyPublishers.ofFile(Paths.get("c:\\Windows\\Help\\X.log")))
+//                .build();
+//        client.sendAsync(request, HttpResponse.BodyHandlers.ofString())
+//                .thenApply(HttpResponse::body)
+//                .thenAccept(System.out::println);
 
     }
 
