@@ -1,4 +1,3 @@
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -19,20 +18,17 @@ public class MyRunnable implements Runnable{
         List<Path> listFiles;
         try {
             listFiles = Files.walk(Paths.get(dir.toString()))
-                    .filter(Files::isRegularFile).toList();
+                    .filter(Files::isRegularFile)
+                    .filter(Files -> Files.getParent().equals(dir))
+                    .toList();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-//        System.out.println(listFiles.size());
+
         for (Path f : listFiles) {
-//            String[] s = new String[2];
-//            s = f.getFileName().toString().split('');
-            if (f.getFileName().toString().equals(file) && f.getParent().equals(dir)) {
-                System.out.println(f
-//                        + " Поток " + Thread.currentThread().getName()
-                );
+            if (f.getFileName().toString().matches(file)) {
+                System.out.println(f);
             }
-//            System.out.println(f + " Поток " + Thread.currentThread().getName());
         }
     }
 }

@@ -7,30 +7,15 @@ import java.util.concurrent.*;
 
 public class Main {
     public static void main(String[] args) throws IOException {
-        searchFile("mmc.CHM", "c:\\Windows\\Help");
+        searchFile("*nv*Y*", "c:\\Windows\\Help");
     }
     public static void searchFile(String file, String dir) throws IOException {
         List<Path> listDirs = Files.walk(Paths.get(dir))
                 .filter(Files::isDirectory).toList();
-//        for(Path s:listDirs) {
-//            System.out.println(s);
-//        }
-//        ExecutorService executorService = Executors.newCachedThreadPool();
+        file = file.replace("*", ".*");
 
         for (Path p:listDirs) {
-//            System.out.println(p);
             new Thread(new MyRunnable(p, file)).start();
-//            List<Path> listFiles = Files.walk(Paths.get(p.toString()))
-//                    .filter(Files::isRegularFile).toList();
-//            executorService.execute(() -> {
-//                for (Path f: listFiles) {
-//                    if (f.getFileName().toString().equals(file)) {
-//                        System.out.println(f.getFileName() + " Поток " + Thread.currentThread().getName());
-//                    }
-//                    System.out.println(f + " Поток " + Thread.currentThread().getName());
-//                }
-//            });
         }
-//        executorService.shutdown();
     }
 }
