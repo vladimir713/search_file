@@ -31,7 +31,8 @@ public class MyRunnable implements Runnable{
 
         for (Path f : listFiles) {
             if (f.getFileName().toString().matches(file)) {                  // file теперь уже с регулярным выражением
-                System.out.println(f);
+//                System.out.println(f);
+                Main.list.add(f);
                 Main.countSmallFiles.incrementAndGet();
             }
         }

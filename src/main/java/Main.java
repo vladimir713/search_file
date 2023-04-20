@@ -5,20 +5,28 @@
  * Также есть вариант программы с использованием Nio2
  */
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.UncheckedIOException;
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
+import java.util.Scanner;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class Main {
     public static AtomicInteger countSmallFiles = new AtomicInteger(0);
+    public static List<Path> list= new CopyOnWriteArrayList<>();
 
     public static void main(String[] args) {
-        searchFile("*nvwksS*", "c:\\Windows\\help");
+        searchFile("*", "c:\\Windows\\Help");
     }
     public static void searchFile(String file, String dir) {
         try {
@@ -38,7 +46,19 @@ public class Main {
             for (Path p:listDirs) {
                 new Thread(new MyRunnable(p, file, latch)).start();    // Можно реализовать и через пул потоков ExecuteService
             }
+
             latch.await();
+
+            for (Path p:list) {
+                System.out.println(p + " размер = " + Files.size(p));
+            }
+            System.out.println("Всего найдено файлов: " + list.size() + "\n\n" + "Копировать их по сети? (y/n)");
+            Scanner sc = new Scanner(System.in);
+            if (sc.nextLine().equals("y")) {
+                transferFile(list, "http://127.0.0.1:8080/transfery");
+            };
+
+
         } catch (UncheckedIOException e) {                      // Может быть очень круто,
             System.out.println("Ошибка доступа к " + dir);      // лучше поискать более специализированные исключения :)
         } catch (IOException e) {
@@ -47,6 +67,16 @@ public class Main {
             System.out.println("Проблемы со счетчиком потоков");
         }
 
-        System.out.println(countSmallFiles);
+//        System.out.println(countSmallFiles);
+
     }
+    public static void transferFile(List<Path> list, String uri) throws FileNotFoundException {
+        HttpClient client = HttpClient.newHttpClient();
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create(uri))
+                .POST(HttpRequest.BodyPublishers.ofFile(Paths.get("c:\\Windows\\Help\\X.log")))
+                .build();
+
+    }
+
 }
