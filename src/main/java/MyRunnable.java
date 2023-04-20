@@ -1,16 +1,20 @@
+/* Copyright (c) 2023, Vladimir Chugunov
+ */
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
+import java.util.concurrent.CountDownLatch;
 
 public class MyRunnable implements Runnable{
     private Path dir;
     private String file;
-
-    public MyRunnable(Path dir, String file) {
+    CountDownLatch latch;
+    public MyRunnable(Path dir, String file, CountDownLatch latch) {
         this.dir = dir;
         this.file = file;
+        this.latch = latch;
     }
 
     @Override
@@ -28,7 +32,9 @@ public class MyRunnable implements Runnable{
         for (Path f : listFiles) {
             if (f.getFileName().toString().matches(file)) {                  // file теперь уже с регулярным выражением
                 System.out.println(f);
+                Main.countSmallFiles.incrementAndGet();
             }
         }
+        latch.countDown();
     }
 }
