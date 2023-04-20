@@ -19,14 +19,14 @@ public class MyRunnable implements Runnable{
         try {
             listFiles = Files.walk(Paths.get(dir.toString()))
                     .filter(Files::isRegularFile)
-                    .filter(Files -> Files.getParent().equals(dir))
-                    .toList();
-        } catch (IOException e) {
+                    .filter(Files -> Files.getParent().equals(dir)) // Чтобы не было повторов найденных файлов.
+                    .toList();                                     // Пока не нашел метода выделить в текущей папке
+        } catch (IOException e) {                                 // только файлы из этой директории, но не из вложенных
             throw new RuntimeException(e);
         }
 
         for (Path f : listFiles) {
-            if (f.getFileName().toString().matches(file)) {
+            if (f.getFileName().toString().matches(file)) {                  // file теперь уже с регулярным выражением
                 System.out.println(f);
             }
         }
