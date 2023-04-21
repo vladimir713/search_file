@@ -30,10 +30,10 @@ public class MyRunnable implements Runnable{
         }
 
         for (Path f : listFiles) {
-            if (f.getFileName().toString().matches(file)) {                  // file теперь уже с регулярным выражением
+            if (f.getFileName().toString().matches(file)) {
 //                System.out.println(f);
                 Main.list.add(f);
-                Main.countSmallFiles.incrementAndGet();
+//                Main.countSmallFiles.incrementAndGet();
             }
         }
         latch.countDown();
